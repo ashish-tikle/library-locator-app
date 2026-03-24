@@ -26,9 +26,12 @@ jobs:
           
       - name: Install dependencies
         run: flutter pub get
+
+      - name: Analyze project
+        run: flutter analyze
         
       - name: Build web
-        run: flutter build web --release --base-href /library-locator-app/
+        run: flutter build web --release --base-href /library-locator-app/ --verbose
       
       - name: Add .nojekyll
         run: touch build/web/.nojekyll
