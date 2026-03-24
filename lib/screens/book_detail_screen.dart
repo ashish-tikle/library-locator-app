@@ -15,7 +15,6 @@ class BookDetailScreen extends StatelessWidget {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: ListView(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildDetailRow('Book No.', book.bookNo),
             const SizedBox(height: 16),
