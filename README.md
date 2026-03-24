@@ -1,18 +1,18 @@
 # Library Locator App
 
-A Flutter application to help locate books in a library with detailed location information.
+A Flutter application to manage and search books with a simple, low-maintenance structure.
 
 ## Features
 
-- **Search**: Search books by title or author
+- **Search**: Search books by book number, title, author, or category
 - **Book List**: View all available books in a clean list
 - **Book Details**: View detailed information including:
+  - Book number
   - Title
-  - Author
-  - Rack location
-  - Shelf number
-  - Row number
-  - Position
+  - Author name
+  - Publish year
+  - Price
+  - Category
 
 ## Platform Support
 
@@ -73,6 +73,6 @@ lib/
 
 ## Usage
 
-1. **Search**: Use the search bar to find books by title or author
+1. **Search**: Use the search bar to find books by book number, title, author, or category
 2. **Browse**: Scroll through the list of available books
-3. **View Details**: Tap on any book to see its complete location information
+3. **View Details**: Tap on any book to see its complete details

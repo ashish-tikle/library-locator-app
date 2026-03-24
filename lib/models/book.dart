@@ -8,77 +8,89 @@ class Book {
   final String id;
   
   @HiveField(1)
+  final String bookNo;
+
+  @HiveField(2)
   final String title;
   
-  @HiveField(2)
-  final String author;
-  
   @HiveField(3)
-  final String rack;
+  final String authorName;
   
   @HiveField(4)
-  final String shelf;
+  final int publishYear;
   
   @HiveField(5)
-  final String row;
+  final double price;
   
   @HiveField(6)
-  final String position;
+  final String category;
 
   Book({
     required this.id,
+    required this.bookNo,
     required this.title,
-    required this.author,
-    required this.rack,
-    required this.shelf,
-    required this.row,
-    required this.position,
+    required this.authorName,
+    required this.publishYear,
+    required this.price,
+    required this.category,
   });
 
   // Create Book from JSON (Supabase response)
   factory Book.fromJson(Map<String, dynamic> json) {
     return Book(
       id: json['id'].toString(),
+      bookNo: json['book_no']?.toString() ?? '',
       title: json['title'] ?? '',
-      author: json['author'] ?? '',
-      rack: json['rack'] ?? '',
-      shelf: json['shelf'] ?? '',
-      row: json['row'] ?? '',
-      position: json['position'] ?? '',
+      authorName: json['author_name'] ?? json['author'] ?? '',
+      publishYear: _parseInt(json['publish_year']),
+      price: _parseDouble(json['price']),
+      category: json['category'] ?? '',
     );
+  }
+
+  static int _parseInt(dynamic value) {
+    if (value is int) return value;
+    if (value is String) return int.tryParse(value) ?? 0;
+    return 0;
+  }
+
+  static double _parseDouble(dynamic value) {
+    if (value is num) return value.toDouble();
+    if (value is String) return double.tryParse(value) ?? 0;
+    return 0;
   }
 
   // Convert Book to JSON (for Supabase insert/update)
   Map<String, dynamic> toJson() {
     return {
       'id': id,
+      'book_no': bookNo,
       'title': title,
-      'author': author,
-      'rack': rack,
-      'shelf': shelf,
-      'row': row,
-      'position': position,
+      'author_name': authorName,
+      'publish_year': publishYear,
+      'price': price,
+      'category': category,
     };
   }
 
   // Create a copy with modified fields
   Book copyWith({
     String? id,
+    String? bookNo,
     String? title,
-    String? author,
-    String? rack,
-    String? shelf,
-    String? row,
-    String? position,
+    String? authorName,
+    int? publishYear,
+    double? price,
+    String? category,
   }) {
     return Book(
       id: id ?? this.id,
+      bookNo: bookNo ?? this.bookNo,
       title: title ?? this.title,
-      author: author ?? this.author,
-      rack: rack ?? this.rack,
-      shelf: shelf ?? this.shelf,
-      row: row ?? this.row,
-      position: position ?? this.position,
+      authorName: authorName ?? this.authorName,
+      publishYear: publishYear ?? this.publishYear,
+      price: price ?? this.price,
+      category: category ?? this.category,
     );
   }
 }

@@ -16,15 +16,38 @@ class BookAdapter extends TypeAdapter<Book> {
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
+
+    final isLegacyFormat = fields[4] is! int;
+
+    if (isLegacyFormat) {
+      return Book(
+        id: (fields[0] ?? '').toString(),
+        bookNo: (fields[0] ?? '').toString(),
+        title: (fields[1] ?? '').toString(),
+        authorName: (fields[2] ?? '').toString(),
+        publishYear: 0,
+        price: 0,
+        category: '',
+      );
+    }
+
     return Book(
       id: fields[0] as String,
-      title: fields[1] as String,
-      author: fields[2] as String,
-      rack: fields[3] as String,
-      shelf: fields[4] as String,
-      row: fields[5] as String,
-      position: fields[6] as String,
+      bookNo: fields[1] as String,
+      title: fields[2] as String,
+      authorName: fields[3] as String,
+      publishYear: fields[4] as int,
+      price: _toDouble(fields[5]),
+      category: fields[6] as String,
     );
+  }
+
+  double _toDouble(dynamic value) {
+    if (value is double) return value;
+    if (value is int) return value.toDouble();
+    if (value is num) return value.toDouble();
+    if (value is String) return double.tryParse(value) ?? 0;
+    return 0;
   }
 
   @override
@@ -34,17 +57,17 @@ class BookAdapter extends TypeAdapter<Book> {
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
+        ..write(obj.bookNo)
+        ..writeByte(2)
       ..write(obj.title)
-      ..writeByte(2)
-      ..write(obj.author)
       ..writeByte(3)
-      ..write(obj.rack)
+        ..write(obj.authorName)
       ..writeByte(4)
-      ..write(obj.shelf)
+        ..write(obj.publishYear)
       ..writeByte(5)
-      ..write(obj.row)
+        ..write(obj.price)
       ..writeByte(6)
-      ..write(obj.position);
+        ..write(obj.category);
   }
 
   @override

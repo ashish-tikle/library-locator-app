@@ -70,7 +70,7 @@ class SupabaseService {
     }
   }
 
-  // Search books by title or author (with offline support)
+  // Search books by book number, title, author, or category (with offline support)
   Future<List<Book>> searchBooks(String query) async {
     try {
       if (query.isEmpty) {
@@ -82,8 +82,11 @@ class SupabaseService {
         await _initDemoData();
         final allBooks = _bookBox.values.toList();
         return allBooks.where((book) {
-          return book.title.toLowerCase().contains(query.toLowerCase()) ||
-                 book.author.toLowerCase().contains(query.toLowerCase());
+          final normalizedQuery = query.toLowerCase();
+          return book.bookNo.toLowerCase().contains(normalizedQuery) ||
+                 book.title.toLowerCase().contains(normalizedQuery) ||
+                 book.authorName.toLowerCase().contains(normalizedQuery) ||
+                 book.category.toLowerCase().contains(normalizedQuery);
         }).toList()
           ..sort((a, b) => a.title.compareTo(b.title));
       }
@@ -95,7 +98,7 @@ class SupabaseService {
         final response = await _supabase
             .from(tableName)
             .select()
-            .or('title.ilike.%$query%,author.ilike.%$query%')
+          .or('book_no.ilike.%$query%,title.ilike.%$query%,author_name.ilike.%$query%,category.ilike.%$query%')
             .order('title', ascending: true);
 
         final books = (response as List)
@@ -107,8 +110,11 @@ class SupabaseService {
         // Search locally in cache
         final allBooks = _bookBox.values.toList();
         return allBooks.where((book) {
-          return book.title.toLowerCase().contains(query.toLowerCase()) ||
-                 book.author.toLowerCase().contains(query.toLowerCase());
+          final normalizedQuery = query.toLowerCase();
+          return book.bookNo.toLowerCase().contains(normalizedQuery) ||
+                 book.title.toLowerCase().contains(normalizedQuery) ||
+                 book.authorName.toLowerCase().contains(normalizedQuery) ||
+                 book.category.toLowerCase().contains(normalizedQuery);
         }).toList()
           ..sort((a, b) => a.title.compareTo(b.title));
       }
@@ -116,8 +122,11 @@ class SupabaseService {
       // Fallback to local search
       final allBooks = _bookBox.values.toList();
       return allBooks.where((book) {
-        return book.title.toLowerCase().contains(query.toLowerCase()) ||
-               book.author.toLowerCase().contains(query.toLowerCase());
+        final normalizedQuery = query.toLowerCase();
+        return book.bookNo.toLowerCase().contains(normalizedQuery) ||
+               book.title.toLowerCase().contains(normalizedQuery) ||
+               book.authorName.toLowerCase().contains(normalizedQuery) ||
+               book.category.toLowerCase().contains(normalizedQuery);
       }).toList()
         ..sort((a, b) => a.title.compareTo(b.title));
     }
@@ -129,12 +138,12 @@ class SupabaseService {
     if (AppConfig.useDemoMode) {
       final newBook = Book(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
+        bookNo: book.bookNo,
         title: book.title,
-        author: book.author,
-        rack: book.rack,
-        shelf: book.shelf,
-        row: book.row,
-        position: book.position,
+        authorName: book.authorName,
+        publishYear: book.publishYear,
+        price: book.price,
+        category: book.category,
       );
       await _bookBox.put(newBook.id, newBook);
       return newBook;
@@ -144,12 +153,12 @@ class SupabaseService {
       final response = await _supabase
           .from(tableName)
           .insert({
+            'book_no': book.bookNo,
             'title': book.title,
-            'author': book.author,
-            'rack': book.rack,
-            'shelf': book.shelf,
-            'row': book.row,
-            'position': book.position,
+            'author_name': book.authorName,
+            'publish_year': book.publishYear,
+            'price': book.price,
+            'category': book.category,
           })
           .select()
           .single();
@@ -177,12 +186,12 @@ class SupabaseService {
       final response = await _supabase
           .from(tableName)
           .update({
+            'book_no': book.bookNo,
             'title': book.title,
-            'author': book.author,
-            'rack': book.rack,
-            'shelf': book.shelf,
-            'row': book.row,
-            'position': book.position,
+            'author_name': book.authorName,
+            'publish_year': book.publishYear,
+            'price': book.price,
+            'category': book.category,
           })
           .eq('id', book.id)
           .select()

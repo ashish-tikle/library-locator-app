@@ -15,34 +15,38 @@ class _AddEditBookScreenState extends State<AddEditBookScreen> {
   final _formKey = GlobalKey<FormState>();
   final _supabaseService = SupabaseService();
   
+  late final TextEditingController _bookNoController;
   late final TextEditingController _titleController;
-  late final TextEditingController _authorController;
-  late final TextEditingController _rackController;
-  late final TextEditingController _shelfController;
-  late final TextEditingController _rowController;
-  late final TextEditingController _positionController;
+  late final TextEditingController _authorNameController;
+  late final TextEditingController _publishYearController;
+  late final TextEditingController _priceController;
+  late final TextEditingController _categoryController;
   
   bool _isLoading = false;
 
   @override
   void initState() {
     super.initState();
+    _bookNoController = TextEditingController(text: widget.book?.bookNo ?? '');
     _titleController = TextEditingController(text: widget.book?.title ?? '');
-    _authorController = TextEditingController(text: widget.book?.author ?? '');
-    _rackController = TextEditingController(text: widget.book?.rack ?? '');
-    _shelfController = TextEditingController(text: widget.book?.shelf ?? '');
-    _rowController = TextEditingController(text: widget.book?.row ?? '');
-    _positionController = TextEditingController(text: widget.book?.position ?? '');
+    _authorNameController = TextEditingController(text: widget.book?.authorName ?? '');
+    _publishYearController = TextEditingController(
+      text: widget.book != null ? widget.book!.publishYear.toString() : '',
+    );
+    _priceController = TextEditingController(
+      text: widget.book != null ? widget.book!.price.toString() : '',
+    );
+    _categoryController = TextEditingController(text: widget.book?.category ?? '');
   }
 
   @override
   void dispose() {
+    _bookNoController.dispose();
     _titleController.dispose();
-    _authorController.dispose();
-    _rackController.dispose();
-    _shelfController.dispose();
-    _rowController.dispose();
-    _positionController.dispose();
+    _authorNameController.dispose();
+    _publishYearController.dispose();
+    _priceController.dispose();
+    _categoryController.dispose();
     super.dispose();
   }
 
@@ -56,14 +60,21 @@ class _AddEditBookScreenState extends State<AddEditBookScreen> {
     });
 
     try {
+      final publishYear = int.tryParse(_publishYearController.text.trim());
+      final price = double.tryParse(_priceController.text.trim());
+
+      if (publishYear == null || price == null) {
+        throw Exception('Publish year and price must be valid numbers');
+      }
+
       final book = Book(
         id: widget.book?.id ?? '',
+        bookNo: _bookNoController.text.trim(),
         title: _titleController.text.trim(),
-        author: _authorController.text.trim(),
-        rack: _rackController.text.trim(),
-        shelf: _shelfController.text.trim(),
-        row: _rowController.text.trim(),
-        position: _positionController.text.trim(),
+        authorName: _authorNameController.text.trim(),
+        publishYear: publishYear,
+        price: price,
+        category: _categoryController.text.trim(),
       );
 
       if (widget.book == null) {
@@ -120,6 +131,20 @@ class _AddEditBookScreenState extends State<AddEditBookScreen> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     TextFormField(
+                      controller: _bookNoController,
+                      decoration: const InputDecoration(
+                        labelText: 'Book No.',
+                        border: OutlineInputBorder(),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.trim().isEmpty) {
+                          return 'Please enter a book number';
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 16),
+                    TextFormField(
                       controller: _titleController,
                       decoration: const InputDecoration(
                         labelText: 'Title',
@@ -134,78 +159,64 @@ class _AddEditBookScreenState extends State<AddEditBookScreen> {
                     ),
                     const SizedBox(height: 16),
                     TextFormField(
-                      controller: _authorController,
+                      controller: _authorNameController,
                       decoration: const InputDecoration(
-                        labelText: 'Author',
+                        labelText: 'Author Name',
                         border: OutlineInputBorder(),
                       ),
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) {
-                          return 'Please enter an author';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 24),
-                    const Text(
-                      'Location',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    TextFormField(
-                      controller: _rackController,
-                      decoration: const InputDecoration(
-                        labelText: 'Rack',
-                        border: OutlineInputBorder(),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.trim().isEmpty) {
-                          return 'Please enter a rack';
+                          return 'Please enter an author name';
                         }
                         return null;
                       },
                     ),
                     const SizedBox(height: 16),
                     TextFormField(
-                      controller: _shelfController,
+                      controller: _publishYearController,
+                      keyboardType: TextInputType.number,
                       decoration: const InputDecoration(
-                        labelText: 'Shelf',
+                        labelText: 'Publish Year',
                         border: OutlineInputBorder(),
                       ),
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) {
-                          return 'Please enter a shelf';
+                          return 'Please enter publish year';
+                        }
+                        if (int.tryParse(value.trim()) == null) {
+                          return 'Please enter a valid year';
                         }
                         return null;
                       },
                     ),
                     const SizedBox(height: 16),
                     TextFormField(
-                      controller: _rowController,
+                      controller: _priceController,
+                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
                       decoration: const InputDecoration(
-                        labelText: 'Row',
+                        labelText: 'Price',
                         border: OutlineInputBorder(),
                       ),
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) {
-                          return 'Please enter a row';
+                          return 'Please enter price';
+                        }
+                        if (double.tryParse(value.trim()) == null) {
+                          return 'Please enter a valid price';
                         }
                         return null;
                       },
                     ),
                     const SizedBox(height: 16),
                     TextFormField(
-                      controller: _positionController,
+                      controller: _categoryController,
                       decoration: const InputDecoration(
-                        labelText: 'Position',
+                        labelText: 'Category',
                         border: OutlineInputBorder(),
                       ),
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) {
-                          return 'Please enter a position';
+                          return 'Please enter category';
                         }
                         return null;
                       },

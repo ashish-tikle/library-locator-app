@@ -194,7 +194,7 @@ class _SearchScreenState extends State<SearchScreen> {
             child: TextField(
               controller: _searchController,
               decoration: const InputDecoration(
-                hintText: 'Search by title or author',
+                hintText: 'Search by book no, title, author, or category',
                 prefixIcon: Icon(Icons.search),
                 border: OutlineInputBorder(),
               ),
@@ -286,7 +286,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                         ),
                                         const SizedBox(height: 8),
                                         Text(
-                                          book.author,
+                                          '${book.bookNo} • ${book.authorName}',
                                           style: const TextStyle(
                                             fontSize: 14,
                                             color: Colors.grey,
@@ -295,26 +295,14 @@ class _SearchScreenState extends State<SearchScreen> {
                                           overflow: TextOverflow.ellipsis,
                                         ),
                                         const Spacer(),
-                                        Row(
-                                          children: [
-                                            const Icon(
-                                              Icons.location_on,
-                                              size: 16,
-                                              color: Colors.grey,
-                                            ),
-                                            const SizedBox(width: 4),
-                                            Expanded(
-                                              child: Text(
-                                                'Rack ${book.rack} → Shelf ${book.shelf} → Row ${book.row} → Position ${book.position}',
-                                                style: const TextStyle(
-                                                  fontSize: 12,
-                                                  color: Colors.grey,
-                                                ),
-                                                maxLines: 2,
-                                                overflow: TextOverflow.ellipsis,
-                                              ),
-                                            ),
-                                          ],
+                                        Text(
+                                          '${book.category} • ${book.publishYear} • ${book.price.toStringAsFixed(2)}',
+                                          style: const TextStyle(
+                                            fontSize: 12,
+                                            color: Colors.grey,
+                                          ),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
                                         ),
                                       ],
                                     ),

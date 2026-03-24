@@ -14,22 +14,20 @@ class BookDetailScreen extends StatelessWidget {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
+        child: ListView(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            _buildDetailRow('Book No.', book.bookNo),
+            const SizedBox(height: 16),
             _buildDetailRow('Title', book.title),
             const SizedBox(height: 16),
-            _buildDetailRow('Author', book.author),
-            const SizedBox(height: 24),
-            const Text(
-              'Location',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 12),
-            _buildLocationCard(),
+            _buildDetailRow('Author Name', book.authorName),
+            const SizedBox(height: 16),
+            _buildDetailRow('Publish Year', book.publishYear.toString()),
+            const SizedBox(height: 16),
+            _buildDetailRow('Price', book.price.toStringAsFixed(2)),
+            const SizedBox(height: 16),
+            _buildDetailRow('Category', book.category),
           ],
         ),
       ),
@@ -53,45 +51,6 @@ class BookDetailScreen extends StatelessWidget {
           style: const TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.w500,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildLocationCard() {
-    return Card(
-      elevation: 2,
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            _buildLocationItem('Rack', book.rack),
-            const Divider(),
-            _buildLocationItem('Shelf', book.shelf),
-            const Divider(),
-            _buildLocationItem('Row', book.row),
-            const Divider(),
-            _buildLocationItem('Position', book.position),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildLocationItem(String label, String value) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          label,
-          style: const TextStyle(fontSize: 16),
-        ),
-        Text(
-          value,
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
           ),
         ),
       ],
